@@ -1,0 +1,19 @@
+name = ceaZine libraries Boocklet
+description = Provide jQuery libraries for ceaZine
+core = 7.x
+
+dependencies[] = libraries (>=2.x)
+
+; Information added by drupal.org packaging script on 2012-10-19
+version = "7.x-1.2"
+core = "7.x"
+project = "ceazine"
+datestamp = "1350652867"
+
+
+; Information added by drupal.org packaging script on 2012-10-22
+version = "7.x-1.4"
+core = "7.x"
+project = "ceazine"
+datestamp = "1350928907"
+

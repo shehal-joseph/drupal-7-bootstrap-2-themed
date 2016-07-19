@@ -1,0 +1,95 @@
+<?php
+/**
+ * @file
+ * ceazine module.
+ */
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function ceazine_field_formatter_info() {
+  $formatters = array(
+    'ceazine' => array(
+      'label'       => t('ceaZine'),
+      'field types' => array('image', 'imagefield_crop', 'media', 'field_collection'),
+      'settings'    => array(
+        'ceazine_image_style'    => '',
+      ),
+    ),
+  );
+  return $formatters;
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function ceazine_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display){
+  if ( count($items) > 0 ) {
+    drupal_add_js(drupal_get_path ('module','ceazine').'/js/jquery.ceazine.js');
+    drupal_add_css(drupal_get_path('module','ceazine').'/css/ceazine.css'); 
+    drupal_add_library('system', 'ui.draggable');
+    libraries_load('easing');
+    libraries_load('booklet','minified');
+    libraries_load('colorbox','minified');
+    $serviceLinks = '';
+    if ( module_exists('service_links') ){
+      $serviceLinks = implode(' ',service_links_render($entity,false,SERVICE_LINKS_STYLE_IMAGE));
+      if ( $serviceLinks ){
+        $serviceLinks = "<div style='margin-bottom:10px; text-align:center;'>
+                            <spam style='background: rgba(0,0,0,0.1);padding: 0px 15px; padding-top: 45px;'>
+                              $serviceLinks
+                            </spam>
+                         </div>";
+      }
+    }
+    $element = array();
+    $width = 0;
+    $height = 0;
+    global $base_url ;
+    $background_link = $base_url.'/'.drupal_get_path('module','ceazine').'/images/view.gif';
+    foreach ( $items as $key=>$item ){
+      $img = file_load($item['fid']);
+      if ( $key == 0 ){
+        $cover = file_create_url(image_style_path('medium',$img->uri));
+        $see = t('View');
+        $out = "<a class='inlineviewer' title='$see' href='#viewer{$item['fid']}'>
+                  <img src='$cover' /></a>
+                  <div style='display:none'><div id='viewer{$item['fid']}'>
+                  $serviceLinks
+                  <div class='mybook'>";
+      }
+      $img = file_create_url($img->uri);
+      $imgInfo = getimagesize($img);
+      if ( $imgInfo[0] > $width){
+        $width = $imgInfo[0];
+      }
+      if ( $imgInfo[1] > $height){
+        $height = $imgInfo[1];
+      }
+      $out .= "<div><img src='$img' /></div>";
+    }
+    $out .= '</div></div></div>';
+    $ceaZineSound = $base_url.'/'.drupal_get_path('module','ceazine').'/sounds/pageflip.mp3';
+    $out .= "<script type='text/javascript'>
+      var ceaZineWidth = $width*2+40;
+      var ceaZineHeight = $height+20;
+      var ceaZineSound = '$ceaZineSound';
+    </script>";
+    $element[0] = array('#markup' => $out);
+  }
+  else {
+    $element[0] = array('#markup' => t('Not images. Probably you need ImageMagick in your server.See ').l('PDF to ImageField','http://drupal.org/project/pdf_to_imagefield'));
+  }
+  return $element;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function ceazine_views_api() {
+  return array(
+    'api' => '3.0',
+    'path' => drupal_get_path('module', 'ceazine') . '/views',
+  );
+}
+

@@ -1,0 +1,139 @@
+<?php
+/**
+ * @file
+ * ceazinelibs module.
+ */
+
+
+/* implementar tema como en ebooks */
+
+
+
+function ceazinelibs_libraries_info() {
+  $libraries['colorbox'] = array(
+    'name'          => 'Colorbox',
+    'vendor url'    => 'http://www.jacklmoore.com/colorbox',
+    'download url'   => 'http://www.jacklmoore.com/colorbox/colorbox.zip',
+    'path'          => 'colorbox',
+    'version callback' => 'ceazinelibs_get_version',
+    'version arguments' => array(
+      'file'  => 'jquery.colorbox.js',
+      'pattern' => '#ColorBox v([0-9\.a-z]+)#',
+      'lines' => 0,
+      'cols' => 32
+    ),   
+
+    'variants' => array(
+      'minified' => array(
+        'version callback' => 'ceazinelibs_get_version',
+        'version arguments' => array(
+          'file'  => 'jquery.colorbox-min.js',
+        ),  
+        'files'    => array(
+          'js' => array(
+            'jquery.colorbox-min.js'
+          ),
+          'css' => array(
+            '../example4/colorbox.css'
+          )
+        )      
+      ),
+      'source' => array(
+        'version callback' => 'ceazinelibs_get_version',
+        'version arguments' => array(
+          'file'  => 'jquery.colorbox.js',
+        ),
+        'files'    => array(
+          'js' => array(
+            'jquery.colorbox.js'
+          ),
+          'css' => array(
+            '../example4/colorbox.css'
+          )
+        )
+      )
+    ),
+  );
+  
+  $libraries['booklet'] = array(
+    'name'          => 'Booklet',
+    'vendor url'    => 'http://http://www.builtbywill.com/code/booklet/',
+    'download url'   => 'http://http://www.builtbywill.com/code/booklet/src/jquery.booklet.1.4.0.zip',
+    'path'          => 'booklet',
+    'version callback' => 'ceazinelibs_get_version',
+    'version arguments' => array(
+      'file'  => 'jquery.booklet.1.4.0.js',
+      'pattern' => '#Version : ([0-9\.a-z]+)#',
+      'lines' => 0,
+      'cols' => 300
+    ), 
+    'variants' => array(
+      'minified' => array(
+        'version callback' => 'ceazinelibs_get_version',
+        'version arguments' => array(
+          'file'  => 'jquery.booklet.1.4.0.min.js',
+        ), 
+        'files'    => array(
+          'js' => array(
+            'jquery.booklet.1.4.0.min.js'
+          ),
+          'css' => array(
+            'jquery.booklet.1.4.0.css'
+          ),
+        )
+      ),
+      'source' => array(
+        'version callback' => 'ceazinelibs_get_version',
+        'version arguments' => array(
+          'file'  => 'jquery.booklet.1.4.0.js',
+        ),
+        'files'    => array(
+          'js' => array(
+            'jquery.booklet.1.4.0.js'
+          ),
+          'css' => array(
+            'jquery.booklet.1.4.0.css'
+          ),
+        )    
+      )
+    ),
+  );
+  
+  $libraries['easing'] = array(
+    'name' => 'Easing',
+    'vendor url' => 'http://gsgd.co.uk/sandbox/jquery/easing/',
+    'download url'   => 'http://gsgd.co.uk/sandbox/jquery/easing/jquery.easing.1.3.js',
+    'path' => '',
+    'version callback' => 'ceazinelibs_get_version',
+    'version arguments' => array(
+      'file'  => 'jquery.easing.1.3.js',
+      'pattern' => '#jQuery Easing v([0-9\.a-z]+)#',
+      'lines' => 0,
+      'cols' => 50    
+    ),
+    'files'  => array(
+      'js' => array(
+        'jquery.easing.1.3.js'
+      )
+    ),
+  );
+  return $libraries;
+}
+
+function ceazinelibs_get_version($library, $options){
+  $version = 0;
+  $file = "{$library['library path']}/{$library['path']}/{$options['file']}";
+  if ( file_exists($file) ){
+    $plugin = file_get_contents($file, NULL, NULL, $options['lines'], $options['cols']);
+    $version = 0;
+    if (preg_match($options['pattern'], $plugin, $matches)) {
+      $version = $matches[1];
+    }    
+  }
+  return $version;
+}
+
+
+
+
+
